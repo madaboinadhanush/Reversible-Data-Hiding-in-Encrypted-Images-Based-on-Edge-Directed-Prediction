@@ -1,0 +1,4 @@
+cmd
+cls
+conda activate env
+python manage.py runserver

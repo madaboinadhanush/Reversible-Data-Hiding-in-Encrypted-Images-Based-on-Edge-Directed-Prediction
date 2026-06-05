@@ -1,0 +1,175 @@
+{% extends 'index.html' %}
+
+{% block hero %}
+<style>
+    body {
+        background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+        min-height: 100vh;
+        margin: 0;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .login-container {
+        max-width: 420px;
+        margin: 60px auto;
+        padding: 40px;
+        border-radius: 15px;
+        background: rgba(255, 255, 255, 0.98);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        transition: transform 0.3s ease;
+        color: #333; /* Added base text color */
+    }
+
+    .login-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .login-header h2 {
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 10px;
+        color: #2c3e50; /* Dark color for heading */
+    }
+
+    .login-header p {
+        color: #555; /* Darker gray for subheading */
+        font-size: 15px;
+        margin-top: 5px;
+    }
+
+    .messages {
+        background-color: #ffeeee;
+        color: #d63031; /* More visible error color */
+        padding: 12px 15px;
+        border-radius: 8px;
+        margin-bottom: 25px;
+        font-size: 14px;
+        border-left: 4px solid #d63031;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: #2c3e50; /* Dark color for labels */
+        font-size: 14px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 15px;
+        transition: all 0.3s ease;
+        background-color: #f8f9fa;
+        color: #333; /* Ensure input text is visible */
+    }
+
+    .form-control::placeholder {
+        color: #999; /* Lighter placeholder text */
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #3498db;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        background-color: #fff;
+    }
+
+    select.form-control {
+        color: #333; /* Ensure select text is visible */
+    }
+
+    .btn-login {
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(to right, #3498db, #2980b9);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 15px;
+    }
+
+    .login-footer {
+        text-align: center;
+        margin-top: 25px;
+        font-size: 14px;
+        color: #555; /* Darker gray for footer text */
+    }
+
+    .login-footer a {
+        color: #3498db;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .login-footer a:hover {
+        text-decoration: underline;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 480px) {
+        .login-container {
+            margin: 30px 15px;
+            padding: 30px 20px;
+        }
+    }
+</style>
+
+<div class="login-container">
+    <div class="login-header">
+        <h2>Welcome Back</h2>
+        <p>Please enter your credentials to login</p>
+    </div>
+
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="post" action="{% url 'user_login' %}">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+        </div>
+
+        <div class="form-group">
+            <label for="role">User Role</label>
+            <select class="form-control" id="role" name="role" required>
+                <option value="" disabled selected>Select your role</option>
+                <option value="do">Data Owner</option>
+                <option value="du">Data User</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn-login">Sign In</button>
+    </form>
+
+    <div class="login-footer">
+        <a href="{% url 'forgot' %}">Forgot password?</a> • Don't have an account? <a href="{% url 'user_register' %}">Register</a>
+    </div>
+</div>
+{% endblock %}

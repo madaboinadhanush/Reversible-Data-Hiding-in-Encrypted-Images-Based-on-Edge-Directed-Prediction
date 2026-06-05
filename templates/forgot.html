@@ -1,0 +1,43 @@
+{% extends 'index.html' %}
+{% load static %}
+
+
+
+
+
+{% block hero %}
+<style>
+  body {
+    background:linear-gradient(135deg ,#93e982, #62dcf1 ); /* Add this to ensure background behind your form */
+    margin: 0;
+    min-height: 100vh;
+  }
+</style>
+
+<div class="forgot-container" style="max-width:400px; margin: 8.5rem auto; background-color: rgb(26, 36, 49); padding: 2rem; border-radius: 1rem;">
+    <h1 style="color:#14b8a6; text-align:center; margin-bottom:1.5rem;">Forgot Password</h1>
+
+    <div class="messages" style="text-align:center; margin-bottom:1rem;">
+        {% for message in messages %}
+            <p class="{{ message.tags }}" style="font-weight:600;">{{ message }}</p>
+        {% endfor %}
+    </div>
+
+    <form method="post" action="">
+        {% csrf_token %}
+        <label for="email" style="display:block; text-align:left; margin-bottom:0.4rem; font-weight:bold; color:#9ca3af;">Enter your email address</label>
+        <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="your.email@example.com"
+            required
+            autofocus
+            style="width:100%; padding:0.75rem 1rem; border-radius:0.5rem; border:1px solid #4b5563; background:#374151; color:#f9fafb; margin-bottom:1.25rem;"
+        />
+        <button type="submit" style="background:#14b8a6; color:white; border:none; padding:0.85rem 0; border-radius:0.75rem; font-weight:700; font-size:1.1rem; cursor:pointer; width:100%;">Send OTP</button>
+    </form>
+
+    <a href="{% url 'user_login' %}" style="display:inline-block; margin-top:1rem; color:#14b8a6; text-decoration:none; font-weight:600;">Back to Login</a>
+</div>
+{% endblock %}

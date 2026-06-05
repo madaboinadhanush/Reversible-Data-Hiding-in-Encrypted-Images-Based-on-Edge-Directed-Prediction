@@ -1,0 +1,379 @@
+{% extends 'index.html' %}
+
+{% block nav %}
+<nav class="navbar navbar-expand-lg bg-white navbar-light sticky-top py-lg-0 px-4 px-lg-5 wow fadeIn" data-wow-delay="0.1s">
+  <a href="{% url 'user_dashboard' %}" class="navbar-brand p-0">
+    <!-- <img class="img-fluid me-3" src="/static/img/logo.png" alt="Icon" /> -->
+    <h1 class="m-0 text-primary" style="font-size: 25px;">Data Hiding in Encrypted Images</h1>
+  </a>
+  <button
+    type="button"
+    class="navbar-toggler"
+    data-bs-toggle="collapse"
+    data-bs-target="#navbarCollapse"
+  >
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse py-4 py-lg-0" id="navbarCollapse">
+    <div class="navbar-nav ms-auto align-items-center">
+      <a href="{% url 'user_dashboard' %}" class="nav-item nav-link">Home</a>
+      <a href="{% url 'uploadfile' %}" class="nav-item nav-link">Upload</a>
+      <a href="{% url 'viewfile' %}" class="nav-item nav-link">View File</a>
+      <a href="{% url 'view_requests' %}" class="nav-item nav-link">View Requests</a>
+      <a href="{% url 'view_response' %}" class="nav-item nav-link">View Response</a>
+
+      <!-- Profile Dropdown Start -->
+      <div class="nav-item dropdown">
+        <a href="#" class="nav-link dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown">
+          <!-- <img src="/static/img/default-profile.png" class="rounded-circle me-2" alt="Profile" width="30" height="30"> -->
+          <span>Profile</span>
+        </a>
+        <div class="dropdown-menu dropdown-menu-end">
+          <a href="{% url 'view_profile' %}" class="dropdown-item">View Profile</a>
+          <hr class="dropdown-divider">
+          <a href="{% url 'logout' %}" class="dropdown-item text-danger">Logout</a>
+        </div>
+      </div>
+      <!-- Profile Dropdown End -->
+
+    </div>
+  </div>
+</nav>
+{% endblock %}
+
+
+{% block hero %}
+<div class="request-management-container">
+  <div class="management-header">
+    <h2>Incoming File Requests</h2>
+    <p>Manage access requests for your shared files</p>
+  </div>
+
+  {% if messages %}
+  <div class="alert-messages">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags|default:'info' }}">
+      <i class="fas fa-info-circle"></i> {{ message }}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <div class="table-container">
+    <table class="request-table">
+      <thead>
+        <tr>
+          <th>Requester</th>
+          <th>Email</th>
+          <th>File</th>
+          <th>Preview</th>
+          <th class="status-col">Status</th>
+          <th class="actions-col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for req in requests %}
+          {% if req.file.user.email == request.session.email %}
+          <tr>
+            <td data-label="Requester">
+              <div class="user-info">
+                <div class="user-avatar">{{ req.user.username|first|upper }}</div>
+                <div>{{ req.user.username }}</div>
+              </div>
+            </td>
+            <td data-label="Email">{{ req.user.email }}</td>
+            <td data-label="File" class="filename">{{ req.file.filename }}</td>
+            <td data-label="Preview" class="file-preview">{{ req.file.filedata|truncatechars:50|default:"No preview" }}</td>
+            <td data-label="Status">
+              <span class="status-badge status-{{ req.status }}">
+                {{ req.status|capfirst }}
+              </span>
+            </td>
+            <td data-label="Actions" class="action-buttons">
+              {% if req.status == 'pending' %}
+                <a href="{% url 'accept_req' req.id %}" class="btn btn-accept">
+                  <i class="fas fa-check"></i> Accept
+                </a>
+                <a href="{% url 'reject_req' req.id %}" class="btn btn-reject">
+                  <i class="fas fa-times"></i> Reject
+                </a>
+              {% else %}
+                <span class="status-text">{{ req.status|capfirst }}</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endif %}
+        {% empty %}
+          <tr class="empty-row">
+            <td colspan="7">
+              <div class="empty-state">
+                <i class="fas fa-inbox"></i>
+                <p>No incoming requests at this time</p>
+              </div>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<style>
+  body{
+    background: linear-gradient(135deg , #a6f17a , #6be4da);
+    height: 100vh ;
+  }
+  /* Base Styles */
+  .request-management-container {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    max-width: 1200px;
+    margin: 100px auto;
+    padding: 25px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .management-header {
+    margin-bottom: 25px;
+  }
+
+  .management-header h2 {
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 5px;
+  }
+
+  .management-header p {
+    color: #7f8c8d;
+    font-size: 0.95rem;
+  }
+
+  /* Alert Messages */
+  .alert-messages {
+    margin-bottom: 25px;
+  }
+
+  .alert {
+    padding: 12px 15px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+  }
+
+  .alert i {
+    margin-right: 10px;
+  }
+
+  .alert-info {
+    background-color: #e7f5ff;
+    color: #1864ab;
+    border-left: 4px solid #1864ab;
+  }
+
+  .alert-success {
+    background-color: #ebfbee;
+    color: #2b8a3e;
+    border-left: 4px solid #2b8a3e;
+  }
+
+  .alert-error {
+    background-color: #fff3bf;
+    color: #e67700;
+    border-left: 4px solid #e67700;
+  }
+
+  /* Table Styles */
+  .table-container {
+    overflow-x: auto;
+  }
+
+  .request-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  .request-table th {
+    background-color: #f8f9fa;
+    color: #495057;
+    font-weight: 600;
+    text-align: left;
+    padding: 15px;
+    border-bottom: 2px solid #e9ecef;
+  }
+
+  .request-table td {
+    padding: 15px;
+    border-bottom: 1px solid #e9ecef;
+    vertical-align: middle;
+  }
+
+  .request-table tr:not(.empty-row):hover {
+    background-color: #f8f9fa;
+  }
+
+  /* User Info */
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: #4dabf7;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+  }
+
+  /* Status Badges */
+  .status-badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .status-pending {
+    background-color: #fff3bf;
+    color: #e67700;
+  }
+
+  .status-accepted {
+    background-color: #d3f9d8;
+    color: #2b8a3e;
+  }
+
+  .status-rejected {
+    background-color: #ffd8d8;
+    color: #c92a2a;
+  }
+
+  /* File Info */
+  .filename {
+    font-weight: 500;
+    color: #2c3e50;
+  }
+
+  .file-preview {
+    color: #7f8c8d;
+    font-size: 13px;
+  }
+
+  /* OTP */
+  .otp-value code {
+    font-family: 'Courier New', monospace;
+    background: #f1f3f5;
+    padding: 3px 6px;
+    border-radius: 4px;
+    color: #1864ab;
+  }
+
+  .na {
+    color: #adb5bd;
+    font-style: italic;
+  }
+
+  /* Action Buttons */
+  .action-buttons {
+    display: flex;
+    gap: 8px;
+  }
+
+  .btn {
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    text-decoration: none;
+  }
+
+  .btn i {
+    font-size: 12px;
+  }
+
+  .btn-accept {
+    background-color: #40c057;
+    color: white;
+    border: none;
+  }
+
+  .btn-accept:hover {
+    background-color: #37b24d;
+  }
+
+  .btn-reject {
+    background-color: #fa5252;
+    color: white;
+    border: none;
+  }
+
+  .btn-reject:hover {
+    background-color: #f03e3e;
+  }
+
+  .status-text {
+    color: #868e96;
+    font-style: italic;
+  }
+
+  /* Empty State */
+  .empty-row td {
+    padding: 40px 15px;
+    text-align: center;
+  }
+
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #adb5bd;
+  }
+
+  .empty-state i {
+    font-size: 40px;
+    margin-bottom: 10px;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .request-management-container {
+      padding: 15px;
+    }
+    
+    .request-table th, 
+    .request-table td {
+      padding: 10px;
+    }
+    
+    .action-buttons {
+      flex-direction: column;
+      gap: 5px;
+    }
+    
+    .btn {
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+  }
+</style>
+
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+{% endblock %}

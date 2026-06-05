@@ -1,0 +1,92 @@
+{% extends 'index.html' %}
+
+
+{% block hero %}
+<style>
+     body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #93e982, #62dcf1);
+    }
+
+    .about-section {
+      background-color: #f9f9f9;
+      padding: 50px 0;
+    }
+
+    .about-section h2 {
+      color: #333;
+      font-weight: bold;
+    }
+
+    .about-section p {
+      font-size: 16px;
+      color: #555;
+      line-height: 1.7;
+    }
+
+    .container {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 0 15px;
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .col-lg-6 {
+      width: 100%;
+      max-width: 50%;
+      box-sizing: border-box;
+      padding: 15px;
+    }
+
+    .img-fluid {
+      max-width: 100%;
+      height: auto;
+    }
+
+    .rounded {
+      border-radius: 8px;
+    }
+
+    .shadow {
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .col-lg-6 {
+        max-width: 100%;
+      }
+    }
+</style>
+ <section id="about" class="about-section">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-6 mb-4 mb-lg-0">
+          <img src="/static/img/image 10.jfif" alt="About" class="img-fluid rounded shadow" />
+        </div>
+        <div class="col-lg-6">
+          <h2 class="mb-4">About Our Project</h2>
+          <p>
+            Our project, <strong>Reversible Data Hiding in Encrypted Images</strong>, introduces a novel approach
+            for securely embedding data in encrypted images without compromising their confidentiality.
+          </p>
+          <p>
+            The method is based on <strong>Edge-Directed Prediction</strong> and <strong>Multi-MSB Self-Prediction</strong>,
+            ensuring high embedding capacity and low distortion while allowing full image recovery.
+          </p>
+          <p>
+            This technique is ideal for applications where privacy and data integrity are critical, such as secure medical imaging,
+            cloud storage, and confidential communications.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+{% endblock %}

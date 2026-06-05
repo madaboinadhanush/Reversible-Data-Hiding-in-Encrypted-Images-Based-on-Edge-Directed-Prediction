@@ -1,0 +1,356 @@
+{% extends 'index.html' %}
+
+{% block nav %}
+<nav class="navbar navbar-expand-lg bg-white navbar-light fixed-top py-lg-0 px-4 px-lg-5 wow fadeIn" data-wow-delay="0.1s">
+  <a href="{% url 'user_dashboard' %}" class="navbar-brand p-0">
+    <!-- <img class="img-fluid me-3" src="/static/img/logo.png" alt="Icon" /> -->
+    <h1 class="m-0 text-primary" style="font-size: 25px;">Data Hiding in Encrypted Images</h1>
+  </a>
+  <button
+    type="button"
+    class="navbar-toggler"
+    data-bs-toggle="collapse"
+    data-bs-target="#navbarCollapse"
+  >
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse py-4 py-lg-0" id="navbarCollapse">
+    <div class="navbar-nav ms-auto align-items-center">
+      <a href="{% url 'user_dashboard' %}" class="nav-item nav-link">Home</a>
+      <a href="{% url 'uploadfile' %}" class="nav-item nav-link">Upload</a>
+      <a href="{% url 'viewfile' %}" class="nav-item nav-link">View File</a>
+      <a href="{% url 'view_requests' %}" class="nav-item nav-link">View Requests</a>
+      <a href="{% url 'view_response' %}" class="nav-item nav-link">View Response</a>
+
+      <!-- Profile Dropdown Start -->
+      <div class="nav-item dropdown">
+        <a href="#" class="nav-link dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown">
+          <!-- <img src="/static/img/default-profile.png" class="rounded-circle me-2" alt="Profile" width="30" height="30"> -->
+          <span>Profile</span>
+        </a>
+        <div class="dropdown-menu dropdown-menu-end">
+          <a href="{% url 'view_profile' %}" class="dropdown-item">View Profile</a>
+          <hr class="dropdown-divider">
+          <a href="{% url 'logout' %}" class="dropdown-item text-danger">Logout</a>
+        </div>
+      </div>
+      <!-- Profile Dropdown End -->
+
+    </div>
+  </div>
+</nav>
+{% endblock %}
+
+{% block hero %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+    :root {
+        --primary: #4361ee;
+        --secondary: #3f37c9;
+        --accent: #4895ef;
+        --light: #f8f9fa;
+        --dark: #212529;
+        --gray: #6c757d;
+        --error: #e63946;
+        --success: #2a9d8f;
+    }
+
+  
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: url('https://images.unsplash.com/photo-1639762681057-408e52192e55?q=80&w=2232&auto=format&fit=crop') no-repeat center center fixed;
+        background-size: cover;
+        margin: 80px auto;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 500px;
+        padding: 20px;
+    }
+
+    .card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        padding: 30px;
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .card h1 {
+        color: var(--primary);
+        text-align: center;
+        margin-bottom: 25px;
+        font-size: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: var(--dark);
+        font-size: 14px;
+    }
+
+    .file-upload {
+        border: 2px dashed var(--gray);
+        border-radius: 8px;
+        padding: 25px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background-color: rgba(248, 249, 250, 0.5);
+    }
+
+    .file-upload:hover {
+        border-color: var(--primary);
+        background-color: rgba(67, 97, 238, 0.05);
+    }
+
+    .file-upload i {
+        font-size: 32px;
+        color: var(--primary);
+        margin-bottom: 10px;
+    }
+
+    .file-upload p {
+        margin: 5px 0;
+        color: var(--gray);
+    }
+
+    .file-upload .small {
+        font-size: 12px;
+        color: var(--gray);
+    }
+
+   .file-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  pointer-events: none; /* optional */
+}
+
+    .key-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+
+    .key-grid div {
+        display: flex;
+        flex-direction: column;
+    }
+
+    input[type="text"],
+    textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        background-color: var(--light);
+    }
+
+    input[type="text"]:focus,
+    textarea:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(72, 149, 239, 0.1);
+        background-color: white;
+    }
+
+    textarea {
+        min-height: 80px;
+        resize: vertical;
+    }
+
+    .btn {
+        width: 100%;
+        padding: 12px;
+        background: linear-gradient(to right, var(--primary), var(--secondary));
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn:active {
+        transform: translateY(0);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 600px) {
+        .key-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .card {
+            padding: 20px;
+        }
+        
+        .container {
+            padding: 15px;
+        }
+    }
+</style>
+
+<body>
+    <div class="container">
+        <div class="card">
+            <h1><i class="fas fa-lock"></i> Secure Image Upload</h1>
+            
+            <form method="POST" enctype="multipart/form-data">
+
+         {% if messages %}
+  <div class="alert-messages">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags|default:'info' }}">
+      <i class="fas fa-info-circle"></i> {{ message }}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="file">Image File</label>
+                    <div class="file-upload" onclick="document.getElementById('file').click()">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Click to upload or drag and drop</p>
+                        <p class="small">Only grayscale images in JPG or PNG format, sized 256×256 pixels, are supported.</p>
+                        <input type="file" name="file" id="file" class="file-input" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Encryption Keys</label>
+                    <div class="key-grid">
+                        <div>
+                            <label for="key_k1">Key K1</label>
+                            <input type="text" name="key_k1" id="key_k1" placeholder="secretK1" required>
+                        </div>
+                        <div>
+                            <label for="key_k2">Key K2</label>
+                            <input type="text" name="key_k2" id="key_k2" placeholder="secretK2" required>
+                        </div>
+                        <div>
+                            <label for="key_k3">Key K3</label>
+                            <input type="text" name="key_k3" id="key_k3" placeholder="secretK3" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="user_data">Confidential Data</label>
+                    <textarea name="user_data" id="user_data" rows="3" required>Confidential payload</textarea>
+                </div>
+                
+                <button type="submit" class="btn">
+                    <i class="fas fa-shield-alt"></i> Encrypt & Upload
+                </button>
+            </form>
+        </div>
+    </div>
+
+    {% comment %} <script>
+        // File upload display
+        document.getElementById('file').addEventListener('change', function(e) {
+            const fileUpload = document.querySelector('.file-upload');
+            if (this.files.length > 0) {
+                fileUpload.innerHTML = `
+                    <i class="fas fa-check-circle" style="color:#2a9d8f"></i>
+                    <p>${this.files[0].name}</p>
+                    <p class="small">Click to change file</p>
+                    ${fileUpload.querySelector('input').outerHTML}
+                `;
+                fileUpload.querySelector('input').addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+            }
+        });
+
+        // Drag and drop functionality
+        const fileUpload = document.querySelector('.file-upload');
+        
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            fileUpload.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            fileUpload.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            fileUpload.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight() {
+            fileUpload.classList.add('highlight');
+        }
+
+        function unhighlight() {
+            fileUpload.classList.remove('highlight');
+        }
+
+        fileUpload.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            document.getElementById('file').files = files;
+            const event = new Event('change');
+            document.getElementById('file').dispatchEvent(event);
+        }
+    </script> {% endcomment %}
+    <script>
+const fileInput = document.getElementById('file');
+const fileUpload = document.querySelector('.file-upload');
+
+fileInput.addEventListener('change', function() {
+    if (this.files.length > 0) {
+        fileUpload.querySelector('p').textContent = this.files[0].name;
+    }
+});
+</script>
+</body>
+{% endblock %}

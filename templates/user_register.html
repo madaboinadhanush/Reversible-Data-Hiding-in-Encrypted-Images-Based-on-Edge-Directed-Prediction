@@ -1,0 +1,263 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block hero %}
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Register</title>
+    <style>
+        /* Basic reset & font */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Container */
+        .form-container {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 5rem 1rem 3rem;
+        }
+
+        /* Form box */
+        form {
+            background-color: rgba(244, 245, 247, 0.9); /* bg-gray-800 with opacity */
+            padding: 2.5rem 3rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 30px rgba(10, 10, 10, 0.6);
+            max-width: 480px;
+            width: 100%;
+            color: #e5e7eb; /* text-gray-200 */
+            transition: transform 0.3s ease;
+        }
+        form:hover {
+            transform: scale(1.03);
+        }
+
+        /* Heading */
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 2.5rem;
+            text-align: center;
+            color: #14b8a6; /* teal-400 */
+            user-select: none;
+        }
+
+        /* Form group */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+            color: #9ca3af; /* gray-400 */
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="tel"],
+        input[type="file"] {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid #4b5563; /* gray-600 */
+            background-color: #374151; /* gray-700 */
+            color: #0d0d0e; /* gray-50 */
+            font-size: 1rem;
+            transition: border-color 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        input::placeholder {
+            color: #9ca3af; /* gray-400 */
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #14b8a6; /* teal-400 */
+            box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.5);
+            background-color: #f2f3f5; /* gray-800 */
+        }
+
+        /* File input styling (basic) */
+        input[type="file"] {
+            padding: 0.4rem 1rem;
+            cursor: pointer;
+        }
+
+        /* Password error message */
+        #password-error {
+            color: #f87171; /* red-400 */
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            user-select: none;
+            display: none;
+        }
+
+        /* Red border for error */
+        .error-border {
+            border-color: #f87171 !important;
+            box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.5) !important;
+        }
+
+        /* Submit button */
+        button[type="submit"] {
+            width: 100%;
+            background-color: #14b8a6; /* teal-400 */
+            color: white;
+            font-weight: 700;
+            padding: 0.85rem 0;
+            border-radius: 0.75rem;
+            border: none;
+            font-size: 1.125rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            user-select: none;
+        }
+
+        button[type="submit"]:hover,
+        button[type="submit"]:focus {
+            background-color: #0d9488; /* teal-600 */
+            outline: none;
+        }
+
+        /* Register link */
+        .register-text {
+            margin-top: 1rem;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #9ca3af;
+            user-select: none;
+        }
+
+        .register-text a {
+            color: #14b8a6;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .register-text a:hover,
+        .register-text a:focus {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            form {
+                padding: 2rem 1.5rem;
+            }
+        }
+        .messages {
+    background-color: #f87171; /* red-400 */
+    color: white;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+    user-select: none;
+}
+
+.messages p {
+    margin: 0;
+}
+    </style>
+</head>
+
+<body>
+     
+    <div class="form-container">
+        <form action="/user_register/" method="post" enctype="multipart/form-data" novalidate>
+            {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+            <h1>Create Account</h1>
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" name="username" id="username" placeholder="Enter Username" required />
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" name="email" id="email" placeholder="Enter Email" required />
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" name="password" id="password" placeholder="Enter Password" required />
+            </div>
+
+            <div class="form-group">
+                <label for="confirm_password">Confirm Password</label>
+                <input type="password" name="confirm_password" id="confirm_password" placeholder="Re-Enter Password" required />
+                <p id="password-error">Passwords do not match</p>
+            </div>
+
+            <div class="form-group">
+                <label for="contact">Contact Number</label>
+                <input type="tel" name="contact" id="contact" placeholder="Enter Contact Number" required
+                    pattern="[0-9]{10}" title="Please enter a valid 10-digit phone number" />
+            </div>
+
+            <div class="form-group">
+                <label for="address">Address</label>
+                <input type="text" name="address" id="address" placeholder="Enter Address" />
+            </div>
+
+            <div class="form-group">
+                <label for="role">Role</label>
+                <select name="role" id="role" required>
+                    <option value="">-- Select Role --</option>
+                    <option value="do">Data Owner</option>
+                    <option value="du">Data User</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="profile">Profile Picture</label>
+                <input type="file" name="profile" id="profile" accept="image/*" />
+            </div>
+
+            <button type="submit">Register</button>
+
+            <p class="register-text">
+                Already have an account? <a href="{% url 'user_login' %}">Login</a>
+            </p>
+        </form>
+    </div>
+
+    <script>
+        const password = document.getElementById('password');
+        const confirmPassword = document.getElementById('confirm_password');
+        const passwordError = document.getElementById('password-error');
+        const form = document.querySelector('form');
+
+        form.addEventListener('submit', (e) => {
+            if (password.value !== confirmPassword.value) {
+                e.preventDefault();
+                passwordError.style.display = 'block';
+                confirmPassword.classList.add('error-border');
+            } else {
+                passwordError.style.display = 'none';
+                confirmPassword.classList.remove('error-border');
+            }
+        });
+    </script>
+</body>
+{% endblock %}

@@ -1,0 +1,323 @@
+{% extends 'index.html' %}
+
+{% block nav %}
+<nav class="navbar navbar-expand-lg bg-white navbar-light fixed-top py-lg-0 px-4 px-lg-5 wow fadeIn" data-wow-delay="0.1s">
+  <a href="{% url 'user_dashboard' %}" class="navbar-brand p-0">
+    <!-- <img class="img-fluid me-3" src="/static/img/logo.png" alt="Icon" /> -->
+    <h1 class="m-0 text-primary" style="font-size: 25px;">Data Hiding in Encrypted Images</h1>
+  </a>
+  <button
+    type="button"
+    class="navbar-toggler"
+    data-bs-toggle="collapse"
+    data-bs-target="#navbarCollapse"
+  >
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse py-4 py-lg-0" id="navbarCollapse">
+    <div class="navbar-nav ms-auto align-items-center">
+      <a href="{% url 'user_dashboard' %}" class="nav-item nav-link">Home</a>
+      <a href="{% url 'uploadfile' %}" class="nav-item nav-link">Upload</a>
+      <a href="{% url 'viewfile' %}" class="nav-item nav-link">View File</a>
+      <a href="{% url 'view_requests' %}" class="nav-item nav-link">View Requests</a>
+      <a href="{% url 'view_response' %}" class="nav-item nav-link">View Response</a>
+
+      <!-- Profile Dropdown Start -->
+      <div class="nav-item dropdown">
+        <a href="#" class="nav-link dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown">
+          <!-- <img src="/static/img/default-profile.png" class="rounded-circle me-2" alt="Profile" width="30" height="30"> -->
+          <span>Profile</span>
+        </a>
+        <div class="dropdown-menu dropdown-menu-end">
+          <a href="{% url 'view_profile' %}" class="dropdown-item">View Profile</a>
+          <hr class="dropdown-divider">
+          <a href="{% url 'logout' %}" class="dropdown-item text-danger">Logout</a>
+        </div>
+      </div>
+      <!-- Profile Dropdown End -->
+
+    </div>
+  </div>
+</nav>
+{% endblock %}
+
+{% block hero %}
+{% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+<div class="file-table-container">
+  <div class="table-responsive">
+    <table class="file-table" aria-label="Uploaded files table">
+      <thead>
+        <tr>
+          <th><i class="fas fa-file-alt"></i> File Name</th>
+          <th><i class="fas fa-user"></i> Username</th>
+          <th><i class="fas fa-file-image"></i> File</th>
+          <th><i class="fas fa-database"></i> File Data</th>
+          {% if role == 'du' %}
+          <th><i class="fas fa-cog"></i> Action</th>
+          {% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for file in files %}
+        <tr>
+          <td data-label="File Name">
+            <div class="file-info">
+              <i class="fas fa-file" style="color: #4361ee;"></i>
+              <span>{{ file.filename|truncatechars:30 }}</span>
+            </div>
+          </td>
+          <td data-label="Username">
+            <div class="user-info">
+              <i class="fas fa-user-circle" style="color: #3f37c9;"></i>
+              <span>{{ file.user.username|truncatechars:15 }}</span>
+            </div>
+          </td>
+          <td data-label="File">
+            {% if file.marked_image %}
+              <a href="{{ file.marked_image.url }}" target="_blank" class="file-link">
+                <i class="fas fa-eye"></i> View
+              </a>
+            {% else %}
+              <span class="na-badge">N/A</span>
+            {% endif %}
+          </td>
+          <td data-label="File Data" class="file-data">
+            <div class="data-preview" title="{{ file.filedata|default:'No data' }}">
+              {{ file.filedata|truncatechars:50|default:"No data" }}
+            </div>
+          </td>
+
+          {% if role == 'du' %}
+          <td data-label="Action">
+            {% if file.user.email != request.session.email %}
+              <a href="{% url 'requestfile' file.id %}" class="request-btn">
+                <i class="fas fa-handshake"></i> Request
+              </a>
+            {% else %}
+              <span class="own-file-badge">
+                <i class="fas fa-check-circle"></i> Own File
+              </span>
+            {% endif %}
+          </td>
+          {% endif %}
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="{% if role == 'du' %}5{% else %}4{% endif %}" class="empty-message">
+            <div class="empty-state">
+              <i class="fas fa-folder-open"></i>
+              <p>No files uploaded yet</p>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<style>
+/* :root {
+  --primary: #4361ee;
+  --secondary: #3f37c9;
+  --accent: #4895ef;
+  --light: #f8f9fa;
+  --dark: #212529;
+  --gray: #6c757d;
+  --light-gray: #e9ecef;
+  --success: #2a9d8f;
+  --warning: #f4a261;
+  --error: #e63946;
+} */
+
+/* === Page Background === */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(to right, #9dd470, #13b6e7); /* soft gradient */
+  margin:120px auto;
+  padding-top: 80px; /* enough space for navbar */
+  min-height: 100vh;
+}
+
+/* === Navbar === */
+.navbar {
+  background: white !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  z-index: 1000;
+}
+
+.navbar-brand h1 {
+  font-size: 22px;
+  color: var(--primary) !important;
+  margin: 0;
+  font-weight: 700;
+}
+
+.navbar-nav .nav-link {
+  color: var(--dark) !important;
+  font-weight: 500;
+  margin-left: 15px;
+}
+
+.navbar-nav .nav-link:hover {
+  color: var(--primary) !important;
+}
+
+/* === File Table Card Container === */
+.file-table-container {
+  max-width: 95%;
+  margin: 2rem auto;
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  padding: 1.5rem;
+}
+
+/* === Table Styling === */
+.file-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.file-table th {
+  background-color: var(--primary);
+  color: white;
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+}
+
+.file-table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--light-gray);
+  background-color: white;
+}
+
+.file-table tr:hover td {
+  background-color: #f1f5ff;
+}
+
+/* === Responsive Table for Mobile === */
+@media (max-width: 768px) {
+  .file-table thead {
+    display: none;
+  }
+
+  .file-table, .file-table tbody, .file-table tr, .file-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .file-table tr {
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+  }
+
+  .file-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border: none;
+    border-bottom: 1px solid #f1f1f1;
+  }
+
+  .file-table td:before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: var(--primary);
+    margin-right: 1rem;
+  }
+}
+
+/* === Buttons, Badges, Links === */
+.request-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: var(--success);  /* e.g. green */
+  color: rgb(197, 235, 93);                      /* visible text color */
+  padding: 6px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  opacity: 1;      /* fully visible */
+  visibility: visible; /* visible */
+}
+
+.request-btn:hover {
+  background-color: #21867a; /* a darker green */
+  transform: translateY(-1px);
+}
+
+
+
+.file-link {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.file-link:hover {
+  text-decoration: underline;
+}
+
+.na-badge, .own-file-badge {
+  font-size: 0.85rem;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.na-badge {
+  background-color: #f1f3f5;
+  color: var(--gray);
+}
+
+.own-file-badge {
+  background-color: #e8fdf5;
+  color: var(--success);
+}
+
+/* === Empty State === */
+.empty-message {
+  padding: 2rem;
+  text-align: center;
+  color: var(--gray);
+}
+
+.empty-state i {
+  font-size: 2rem;
+  color: var(--light-gray);
+}
+
+.empty-state p {
+  margin-top: 10px;
+}
+
+/* === Misc Layout Fixes === */
+.table-responsive {
+  overflow-x: auto;
+}
+
+.data-preview {
+  max-width: 220px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: help;
+}
+</style>
+
+{% endblock %}

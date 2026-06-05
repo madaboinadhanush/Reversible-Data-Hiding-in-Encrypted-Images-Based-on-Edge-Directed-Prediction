@@ -1,0 +1,45 @@
+{% extends 'index.html' %}
+
+
+{% block nav %}
+<nav class="navbar navbar-expand-lg bg-white navbar-light sticky-top py-lg-0 px-4 px-lg-5 wow fadeIn" data-wow-delay="0.1s">
+  <a href="{% url 'user_dashboard' %}" class="navbar-brand p-0">
+    <!-- <img class="img-fluid me-3" src="/static/img/logo.png" alt="Icon" /> -->
+    <h1 class="m-0 text-primary" style="font-size: 25px;">Data Hiding in Encrypted Images</h1>
+  </a>
+  <button
+    type="button"
+    class="navbar-toggler"
+    data-bs-toggle="collapse"
+    data-bs-target="#navbarCollapse"
+  >
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse py-4 py-lg-0" id="navbarCollapse">
+    <div class="navbar-nav ms-auto align-items-center">
+      <a href="{% url 'user_dashboard' %}" class="nav-item nav-link">Home</a>
+      <a href="{% url 'uploadfile' %}" class="nav-item nav-link">Upload</a>
+      <a href="{% url 'viewfile' %}" class="nav-item nav-link">View File</a>
+      <a href="{% url 'view_requests' %}" class="nav-item nav-link">View Requests</a>
+      <a href="{% url 'view_response' %}" class="nav-item nav-link">View Response</a>
+
+      <!-- Profile Dropdown Start -->
+      <div class="nav-item dropdown">
+        <a href="#" class="nav-link dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown">
+          <!-- <img src="/static/img/default-profile.png" class="rounded-circle me-2" alt="Profile" width="30" height="30"> -->
+          <span>Profile</span>
+        </a>
+        <div class="dropdown-menu dropdown-menu-end">
+          <a href="{% url 'view_profile' %}" class="dropdown-item">View Profile</a>
+          <hr class="dropdown-divider">
+          <a href="{% url 'logout' %}" class="dropdown-item text-danger">Logout</a>
+        </div>
+      </div>
+      <!-- Profile Dropdown End -->
+
+    </div>
+  </div>
+</nav>
+
+{% endblock %}

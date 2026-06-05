@@ -1,0 +1,151 @@
+{% extends 'index.html' %}
+
+
+
+
+{% block nav %}
+<nav class="navbar navbar-expand-lg bg-white navbar-light fixed-top py-lg-0 px-4 px-lg-5 wow fadeIn" data-wow-delay="0.1s">
+  <a href="{% url 'user_dashboard' %}" class="navbar-brand p-0">
+    <!-- <img class="img-fluid me-3" src="/static/img/logo.png" alt="Icon" /> -->
+    <h1 class="m-0 text-primary" style="font-size: 25px;">Data Hiding in Encrypted Images</h1>
+  </a>
+  <button
+    type="button"
+    class="navbar-toggler"
+    data-bs-toggle="collapse"
+    data-bs-target="#navbarCollapse"
+  >
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse py-4 py-lg-0" id="navbarCollapse">
+    <div class="navbar-nav ms-auto align-items-center">
+      <a href="{% url 'user_dashboard' %}" class="nav-item nav-link">Home</a>
+      <a href="{% url 'uploadfile' %}" class="nav-item nav-link">Upload</a>
+      <a href="{% url 'viewfile' %}" class="nav-item nav-link">View File</a>
+      <a href="{% url 'view_requests' %}" class="nav-item nav-link">View Requests</a>
+      <a href="{% url 'view_response' %}" class="nav-item nav-link">View Response</a>
+
+      <!-- Profile Dropdown Start -->
+      <div class="nav-item dropdown">
+        <a href="#" class="nav-link dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown">
+          <!-- <img src="/static/img/default-profile.png" class="rounded-circle me-2" alt="Profile" width="30" height="30"> -->
+          <span>Profile</span>
+        </a>
+        <div class="dropdown-menu dropdown-menu-end">
+          <a href="{% url 'view_profile' %}" class="dropdown-item">View Profile</a>
+          <hr class="dropdown-divider">
+          <a href="{% url 'logout' %}" class="dropdown-item text-danger">Logout</a>
+        </div>
+      </div>
+      <!-- Profile Dropdown End -->
+
+    </div>
+  </div>
+</nav>
+{% endblock %}
+
+
+
+{% block hero %}
+<div class="otp-container">
+  <div class="otp-card">
+    <h2 class="otp-title">OTP Verification</h2>
+    <form method="post">
+      {% csrf_token %}
+      <input type="hidden" name="stage" value="otp">
+      <div class="form-group">
+        <label for="otp">Enter OTP</label>
+        <input type="text" id="otp" name="otp" placeholder="6-digit code" required>
+      </div>
+      <button type="submit" class="submit-btn">Verify</button>
+    </form>
+  </div>
+</div>
+
+<style>
+  body {
+    background: linear-gradient(135deg, #f8825f, #f5b351 ,#61f1d2 );
+    margin: 0;
+    padding-top: 80px; /* Account for fixed navbar */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .otp-container {
+    width: 100%;
+    max-width: 400px;
+    margin: 11rem auto;
+    padding: 0 1rem;
+  }
+
+  .otp-card {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+
+  .otp-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: #4361ee;
+    margin-bottom: 20px;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+    text-align: left;
+  }
+
+  .form-group label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: #333;
+  }
+
+  .form-group input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+  }
+
+  .form-group input:focus {
+    border-color: #4361ee;
+    outline: none;
+    box-shadow: 0 0 5px rgba(67, 97, 238, 0.2);
+  }
+
+  .submit-btn {
+    background-color: #4361ee;
+    color: white;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+
+  .submit-btn:hover {
+    background-color: #3a4edb;
+  }
+
+  @media (max-width: 500px) {
+    .otp-card {
+      padding: 20px;
+    }
+  }
+</style>
+
+
+
+{% endblock %}

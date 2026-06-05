@@ -1,0 +1,122 @@
+{% extends 'index.html' %}
+
+
+{% block nav %}
+<nav class="navbar navbar-expand-lg bg-white navbar-light sticky-top py-lg-0 px-4 px-lg-5 wow fadeIn" data-wow-delay="0.1s">
+  <a href="{% url 'user_dashboard' %}" class="navbar-brand p-0">
+    <!-- <img class="img-fluid me-3" src="/static/img/logo.png" alt="Icon" /> -->
+    <h1 class="m-0 text-primary" style="font-size: 25px;">Data Hiding in Encrypted Images</h1>
+  </a>
+  <button
+    type="button"
+    class="navbar-toggler"
+    data-bs-toggle="collapse"
+    data-bs-target="#navbarCollapse"
+  >
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse py-4 py-lg-0" id="navbarCollapse">
+    <div class="navbar-nav ms-auto align-items-center">
+      <a href="{% url 'user_dashboard' %}" class="nav-item nav-link">Home</a>
+      <a href="{% url 'uploadfile' %}" class="nav-item nav-link">Upload</a>
+      <a href="{% url 'viewfile' %}" class="nav-item nav-link">View File</a>
+      <a href="{% url 'view_requests' %}" class="nav-item nav-link">View Requests</a>
+      <a href="{% url 'view_response' %}" class="nav-item nav-link">View Response</a>
+
+      <!-- Profile Dropdown Start -->
+      <div class="nav-item dropdown">
+        <a href="#" class="nav-link dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown">
+          <!-- <img src="/static/img/default-profile.png" class="rounded-circle me-2" alt="Profile" width="30" height="30"> -->
+          <span>Profile</span>
+        </a>
+        <div class="dropdown-menu dropdown-menu-end">
+          <a href="{% url 'view_profile' %}" class="dropdown-item">View Profile</a>
+          <hr class="dropdown-divider">
+          <a href="{% url 'logout' %}" class="dropdown-item text-danger">Logout</a>
+        </div>
+      </div>
+      <!-- Profile Dropdown End -->
+
+    </div>
+  </div>
+</nav>
+{% endblock %}
+
+
+
+
+{% block hero %}
+<style>
+    body{
+        background: linear-gradient(135deg ,#93e982, #62dcf1 );
+    }
+</style>
+<div style="
+    max-width: 650px;
+    margin: 50px auto;
+    padding: 40px;
+    background: linear-gradient(to right, #f0f4f8, #d9e2ec);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    border-radius: 16px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #2c3e50;
+">
+    <h2 style="text-align: center; font-weight: bold; margin-bottom: 30px;">Update Profile</h2>
+
+    <form method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 20px;">
+        {% csrf_token %}
+
+        <div>
+            <label for="username" style="font-weight: 600;">Username</label><br>
+            <input type="text" name="username" id="username" value="{{ user.username }}" required
+                style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px;">
+        </div>
+
+        <div>
+            <label for="email" style="font-weight: 600;">Email</label><br>
+            <input type="email" name="email" id="email" value="{{ user.email }}" required
+                style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px;">
+        </div>
+
+        <div>
+            <label for="contact" style="font-weight: 600;">Contact</label><br>
+            <input type="text" name="contact" id="contact" value="{{ user.contact }}" required
+                style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px;">
+        </div>
+
+        <div>
+            <label for="address" style="font-weight: 600;">Address</label><br>
+            <textarea name="address" id="address" rows="3" required
+                style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px;">{{ user.address }}</textarea>
+        </div>
+
+        <div>
+            <label for="profile" style="font-weight: 600;">Profile Picture</label><br>
+            <input type="file" name="profile" id="profile"
+                style="width: 100%; padding: 8px; border: 1px dashed #aaa; border-radius: 8px; background-color: #fff;">
+        </div>
+
+        <div style="text-align: center; margin-top: 10px;">
+            <button type="submit"
+                style="
+                    background-color: #2980b9;
+                    color: white;
+                    padding: 12px 30px;
+                    border: none;
+                    border-radius: 30px;
+                    font-size: 16px;
+                    font-weight: bold;
+                    box-shadow: 0 6px 15px rgba(41, 128, 185, 0.4);
+                    cursor: pointer;
+                    transition: background-color 0.3s ease;
+                "
+                onmouseover="this.style.backgroundColor='#1f618d'"
+                onmouseout="this.style.backgroundColor='#2980b9'"
+            >
+                <i class="fas fa-save" style="margin-right: 8px;"></i> Save Changes
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

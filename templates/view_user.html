@@ -1,0 +1,225 @@
+{% extends 'index.html' %}
+
+{% block nav %}
+<nav
+      class="navbar navbar-expand-lg bg-white navbar-light sticky-top py-lg-0 px-4 px-lg-5 wow fadeIn"
+      data-wow-delay="0.1s"
+    >
+      <a href="index.html" class="navbar-brand p-0">
+        <!-- <img class="img-fluid me-3" src="/static/img/logo.png" alt="Icon" /> -->
+        <h1 class="m-0 text-primary" style="font-size: 25px;">Data Hiding in Encrypted Images</h1>
+      </a>
+      <button
+        type="button"
+        class="navbar-toggler"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarCollapse"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse py-4 py-lg-0" id="navbarCollapse">
+        <div class="navbar-nav ms-auto">
+          <a href="{% url 'admin_dashboard' %}" class="nav-item nav-link">Home</a>
+          <a href="{% url 'view_user' %}" class="nav-item nav-link">View User</a>
+          <a href="{% url 'logout' %}" class="nav-item nav-link">Logout</a>
+          <!-- <a href="contact.html" class="nav-item nav-link">Contact</a> -->
+        </div>
+        <!-- <a href="" class="btn btn-primary"
+          >Buy Ticket<i class="fa fa-arrow-right ms-3"></i
+        ></a>
+      </div> -->
+    </nav>
+{% endblock %}
+
+{% block hero %}
+<div class="user-management-container">
+    <h2 class="management-header">User Authorization Management</h2>
+    
+    {% if messages %}
+    <div class="alert-messages">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="table-responsive">
+        <table class="user-table">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Address</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.address }}</td>
+                    <td>
+                        <span class="status-badge {% if user.is_authorized %}status-authorized{% else %}status-unauthorized{% endif %}">
+                            {% if user.is_authorized %}Authorized{% else %}Unauthorized{% endif %}
+                        </span>
+                    </td>
+                    <td>
+                        <form method="POST" action="{% url 'authorization' user.id %}" class="authorization-form">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-auth {% if user.is_authorized %}btn-unauth{% else %}btn-auth{% endif %}">
+                                {% if user.is_authorized %}Revoke Access{% else %}Grant Access{% endif %}
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+  body{
+    background: linear-gradient(135deg, #bce263 , #44bcda);
+    height: 100vh;
+
+  }
+    .user-management-container {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        max-width: 1200px;
+        margin: 120px auto;
+        padding: 25px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        
+    }
+
+    .management-header {
+        color: #2c3e50;
+        margin-bottom: 25px;
+        font-weight: 600;
+        border-bottom: 2px solid #f1f1f1;
+        padding-bottom: 10px;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    .user-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+    }
+
+    .user-table th {
+        background-color: #f8f9fa;
+        color: #495057;
+        font-weight: 600;
+        text-align: left;
+        padding: 12px 15px;
+        border-bottom: 2px solid #e9ecef;
+    }
+
+    .user-table td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #e9ecef;
+        vertical-align: middle;
+    }
+
+    .user-table tr:hover {
+        background-color: #f8f9fa;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .status-authorized {
+        background-color: #e6f7ee;
+        color: #28a745;
+    }
+
+    .status-unauthorized {
+        background-color: #fdecea;
+        color: #dc3545;
+    }
+
+    .authorization-form {
+        display: inline-block;
+        margin: 0;
+    }
+
+    .btn-auth {
+        border: none;
+        padding: 8px 15px;
+        border-radius: 4px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        color: white;
+    }
+
+    .btn-auth {
+        background-color: #28a745;
+    }
+
+    .btn-unauth {
+        background-color: #dc3545;
+    }
+
+    .btn-auth:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+    }
+
+    .alert-messages {
+        margin-bottom: 20px;
+    }
+
+    .alert {
+        padding: 12px 15px;
+        border-radius: 4px;
+        margin-bottom: 10px;
+        font-size: 14px;
+    }
+
+    .alert-success {
+        background-color: #e6f7ee;
+        color: #28a745;
+        border-left: 4px solid #28a745;
+    }
+
+    .alert-error {
+        background-color: #fdecea;
+        color: #dc3545;
+        border-left: 4px solid #dc3545;
+    }
+
+    @media (max-width: 768px) {
+        .user-management-container {
+            padding: 15px;
+        }
+        
+        .user-table th, 
+        .user-table td {
+            padding: 8px 10px;
+        }
+        
+        .btn-auth {
+            padding: 6px 10px;
+            font-size: 12px;
+        }
+    }
+</style>
+{% endblock %}

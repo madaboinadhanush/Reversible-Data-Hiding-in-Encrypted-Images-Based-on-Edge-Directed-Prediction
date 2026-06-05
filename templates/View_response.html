@@ -1,0 +1,440 @@
+{% extends 'index.html' %}
+
+{% block nav %}
+<nav class="navbar navbar-expand-lg bg-white navbar-light sticky-top py-lg-0 px-4 px-lg-5 wow fadeIn" data-wow-delay="0.1s">
+  <a href="{% url 'user_dashboard' %}" class="navbar-brand p-0">
+    <!-- <img class="img-fluid me-3" src="/static/img/logo.png" alt="Icon" /> -->
+    <h1 class="m-0 text-primary" style="font-size: 25px;">Data Hiding in Encrypted Images</h1>
+  </a>
+  <button
+    type="button"
+    class="navbar-toggler"
+    data-bs-toggle="collapse"
+    data-bs-target="#navbarCollapse"
+  >
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse py-4 py-lg-0" id="navbarCollapse">
+    <div class="navbar-nav ms-auto align-items-center">
+      <a href="{% url 'user_dashboard' %}" class="nav-item nav-link">Home</a>
+      <a href="{% url 'uploadfile' %}" class="nav-item nav-link">Upload</a>
+      <a href="{% url 'viewfile' %}" class="nav-item nav-link">View File</a>
+      <a href="{% url 'view_requests' %}" class="nav-item nav-link">View Requests</a>
+      <a href="{% url 'view_response' %}" class="nav-item nav-link">View Response</a>
+
+      <!-- Profile Dropdown Start -->
+      <div class="nav-item dropdown">
+        <a href="#" class="nav-link dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown">
+          <!-- <img src="/static/img/default-profile.png" class="rounded-circle me-2" alt="Profile" width="30" height="30"> -->
+          <span>Profile</span>
+        </a>
+        <div class="dropdown-menu dropdown-menu-end">
+          <a href="{% url 'view_profile' %}" class="dropdown-item">View Profile</a>
+          <hr class="dropdown-divider">
+          <a href="{% url 'logout' %}" class="dropdown-item text-danger">Logout</a>
+        </div>
+      </div>
+      <!-- Profile Dropdown End -->
+
+    </div>
+  </div>
+</nav>
+{% endblock %}
+
+
+
+{% block hero %}
+<div class="requests-dashboard">
+  <div class="dashboard-header">
+    <h2><i class="fas fa-file-import"></i> Your File Access Requests</h2>
+    <p>Track the status of files you've requested access to</p>
+  </div>
+
+  {% if messages %}
+  <div class="notification-container">
+    {% for message in messages %}
+    <div class="notification notification-{{ message.tags|default:'info' }}">
+      <i class="fas fa-info-circle"></i>
+      <span>{{ message }}</span>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <div class="table-wrapper">
+    <table class="requests-table">
+      <thead>
+        <tr>
+          <th class="user-col">Requester</th>
+          <th class="email-col">Email</th>
+          <th class="file-col">File</th>
+          <th class="preview-col">Preview</th>
+          <th class="status-col">Status</th>
+          <th class="action-col">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for res in responses %}
+          {% if res.user.email == request.session.email %}
+          <tr>
+            <td data-label="Requester">
+              <div class="user-cell">
+                <div class="user-avatar">
+                  {{ res.user.username|first|upper }}
+                </div>
+                <span>{{ res.user.username }}</span>
+              </div>
+            </td>
+            <td data-label="Email" class="email-cell">{{ res.user.email }}</td>
+            <td data-label="File" class="filename">{{ res.file.filename }}</td>
+            <td data-label="Preview" class="preview-cell">
+              {{ res.file.filedata|truncatechars:50|default:"No preview available" }}
+            </td>
+            <td data-label="Status">
+              <div class="status-badge status-{{ res.status }}">
+                {{ res.status|capfirst }}
+              </div>
+            </td>
+            <td data-label="Action">
+              {% if res.status == 'accepted' %}
+                <form method="get" action="{% url 'download' res.file.id %}" style="display:inline;">
+                <button type="submit" class="download-btn">
+                  <i class="fas fa-download"></i> Download
+                </button>
+              </form>
+
+              {% elif res.status == 'pending' %}
+                <div class="waiting-indicator">
+                  <i class="fas fa-clock"></i> Processing
+                </div>
+              {% elif res.status == 'rejected' %}
+                <div class="rejected-indicator">
+                  <i class="fas fa-times-circle"></i> Denied
+                </div>
+              {% endif %}
+            </td>
+          </tr>
+          {% endif %}
+        {% empty %}
+          <tr class="empty-row">
+            <td colspan="6">
+              <div class="empty-state">
+                <i class="fas fa-inbox"></i>
+                <p>No request responses yet</p>
+                <small>Your pending requests will appear here</small>
+              </div>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<style>
+
+  body{
+    background: linear-gradient(135deg ,#5499e9 , #4de2c9 );
+    height: 100vh ;
+  }
+  /* Base Styles */
+  .requests-dashboard {
+    font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    max-width: 1200px;
+    margin: 10rem auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  /* Header */
+  .dashboard-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .dashboard-header h2 {
+    color: #2d3748;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .dashboard-header p {
+    color: #718096;
+    font-size: 0.95rem;
+  }
+
+  /* Notifications */
+  .notification-container {
+    margin-bottom: 1.5rem;
+  }
+
+  .notification {
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  .notification i {
+    font-size: 1.1rem;
+  }
+
+  .notification-info {
+    background-color: #ebf8ff;
+    color: #3182ce;
+    border-left: 4px solid #3182ce;
+  }
+
+  .notification-success {
+    background-color: #f0fff4;
+    color: #38a169;
+    border-left: 4px solid #38a169;
+  }
+
+  .notification-error {
+    background-color: #fff5f5;
+    color: #e53e3e;
+    border-left: 4px solid #e53e3e;
+  }
+
+  /* Table Styles */
+  .table-wrapper {
+    overflow-x: auto;
+    border-radius: 8px;
+    border: 1px solid #edf2f7;
+  }
+
+  .requests-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+
+  .requests-table th {
+    background-color: #f7fafc;
+    color: #4a5568;
+    font-weight: 600;
+    text-align: left;
+    padding: 1rem;
+    border-bottom: 2px solid #e2e8f0;
+  }
+
+  .requests-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #edf2f7;
+    vertical-align: middle;
+  }
+
+  .requests-table tr:not(.empty-row):hover {
+    background-color: #f8fafc;
+  }
+
+  /* User Cell */
+  .user-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: #4299e1;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    flex-shrink: 0;
+  }
+
+  /* Status Badges */
+  .status-badge {
+    display: inline-block;
+    padding: 0.35rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-transform: capitalize;
+  }
+
+  .status-pending {
+    background-color: #feebc8;
+    color: #dd6b20;
+  }
+
+  .status-accepted {
+    background-color: #c6f6d5;
+    color: #25855a;
+  }
+
+  .status-rejected {
+    background-color: #fed7d7;
+    color: #c53030;
+  }
+
+  /* File Info */
+  .filename {
+    font-weight: 500;
+    color: #2d3748;
+  }
+
+  .preview-cell {
+    color: #718096;
+    font-size: 0.85rem;
+  }
+
+  /* Action Buttons */
+  .download-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.9rem;
+    background-color: #38b2ac;
+    color: white;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .download-btn:hover {
+    background-color: #319795;
+    transform: translateY(-1px);
+  }
+
+  .download-btn i {
+    font-size: 0.8rem;
+  }
+
+  .waiting-indicator,
+  .rejected-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+  }
+
+  .waiting-indicator {
+    color: #718096;
+  }
+
+  .rejected-indicator {
+    color: #e53e3e;
+  }
+
+  .waiting-indicator i {
+    color: #dd6b20;
+  }
+
+  /* Empty State */
+  .empty-row td {
+    padding: 3rem 1rem;
+    text-align: center;
+  }
+
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #a0aec0;
+  }
+
+  .empty-state i {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: #cbd5e0;
+  }
+
+  .empty-state p {
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+  }
+
+  .empty-state small {
+    font-size: 0.85rem;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .requests-dashboard {
+      padding: 1.25rem;
+    }
+
+    .requests-table th,
+    .requests-table td {
+      padding: 0.75rem;
+    }
+
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .requests-table {
+      display: block;
+    }
+
+    .requests-table thead {
+      display: none;
+    }
+
+    .requests-table tr {
+      display: block;
+      margin-bottom: 1rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+    }
+
+    .requests-table td {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem;
+      border-bottom: 1px solid #edf2f7;
+    }
+
+    .requests-table td:before {
+      content: attr(data-label);
+      font-weight: 600;
+      color: #4a5568;
+      margin-right: 1rem;
+    }
+
+    .requests-table td:last-child {
+      border-bottom: none;
+    }
+
+    .status-badge,
+    .download-btn,
+    .waiting-indicator,
+    .rejected-indicator {
+      margin-left: auto;
+    }
+
+    .empty-row td {
+      display: block;
+      text-align: center;
+    }
+  }
+</style>
+
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+{% endblock %}

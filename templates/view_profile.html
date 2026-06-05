@@ -1,0 +1,155 @@
+{% extends 'index.html' %}
+
+
+{% block nav %}
+<nav class="navbar navbar-expand-lg bg-white navbar-light sticky-top py-lg-0 px-4 px-lg-5 wow fadeIn" data-wow-delay="0.1s">
+  <a href="{% url 'user_dashboard' %}" class="navbar-brand p-0">
+    <!-- <img class="img-fluid me-3" src="/static/img/logo.png" alt="Icon" /> -->
+    <h1 class="m-0 text-primary" style="font-size: 25px;">Data Hiding in Encrypted Images</h1>
+  </a>
+  <button
+    type="button"
+    class="navbar-toggler"
+    data-bs-toggle="collapse"
+    data-bs-target="#navbarCollapse"
+  >
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse py-4 py-lg-0" id="navbarCollapse">
+    <div class="navbar-nav ms-auto align-items-center">
+      <a href="{% url 'user_dashboard' %}" class="nav-item nav-link">Home</a>
+      <a href="{% url 'uploadfile' %}" class="nav-item nav-link">Upload</a>
+      <a href="{% url 'viewfile' %}" class="nav-item nav-link">View File</a>
+
+      <!-- Profile Dropdown Start -->
+      <div class="nav-item dropdown">
+        <a href="#" class="nav-link dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown">
+          <!-- <img src="/static/img/default-profile.png" class="rounded-circle me-2" alt="Profile" width="30" height="30"> -->
+          <span>Profile</span>
+        </a>
+        <div class="dropdown-menu dropdown-menu-end">
+          <a href="{% url 'view_profile' %}" class="dropdown-item">View Profile</a>
+          <hr class="dropdown-divider">
+          <a href="{% url 'logout' %}" class="dropdown-item text-danger">Logout</a>
+        </div>
+      </div>
+      <!-- Profile Dropdown End -->
+
+    </div>
+  </div>
+</nav>
+{% endblock %}
+
+
+{% block hero %}
+<style>
+  body{
+    background: linear-gradient(135deg , #f35c2e, #f1ad47 , #f8f4f0);
+  }
+</style>
+<div style="
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 30px 40px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #f8f4f0, #d9e2ec);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+">
+  <h2 style="text-align: center; font-weight: 700; margin-bottom: 30px; color: #2c3e50;">
+    User Profile
+  </h2>
+
+  <div style="text-align: center; margin-bottom: 30px;">
+    {% if user.profile %}
+      <img
+        src="{{ user.profile.url }}"
+        alt="Profile Picture"
+        style="
+          width: 160px;
+          height: 160px;
+          border-radius: 50%;
+          object-fit: cover;
+          border: 4px solid #2980b9;
+          box-shadow: 0 4px 15px rgba(41, 128, 185, 0.3);
+          transition: transform 0.3s ease;
+        "
+        onmouseover="this.style.transform='scale(1.05)'"
+        onmouseout="this.style.transform='scale(1)'"
+      />
+    {% else %}
+      <p style="font-style: italic; color: #777;">No profile picture uploaded.</p>
+    {% endif %}
+  </div>
+
+  <table style="width: 100%; border-collapse: separate; border-spacing: 0 12px; font-size: 16px;">
+    <tr>
+      <td style="font-weight: 600; width: 35%; color: #34495e;">Username:</td>
+      <td>{{ user.username }}</td>
+    </tr>
+    <tr>
+      <td style="font-weight: 600; color: #34495e;">Email:</td>
+      <td>{{ user.email }}</td>
+    </tr>
+    <tr>
+      <td style="font-weight: 600; color: #34495e;">Contact:</td>
+      <td>{{ user.contact }}</td>
+    </tr>
+    <tr>
+      <td style="font-weight: 600; color: #34495e;">Address:</td>
+      <td>{{ user.address }}</td>
+    </tr>
+    <tr>
+      <td style="font-weight: 600; color: #34495e;">Role:</td>
+      <td>{{ user.role|upper }}</td>
+    </tr>
+    <tr>
+      <td style="font-weight: 600; color: #34495e;">Status:</td>
+      <td>
+        {% if user.is_authorized %}
+          <span style="
+            color: #27ae60;
+            font-weight: 700;
+            background: #d4efdf;
+            padding: 4px 12px;
+            border-radius: 20px;
+            display: inline-block;
+          ">Authorized</span>
+        {% else %}
+          <span style="
+            color: #c0392b;
+            font-weight: 700;
+            background: #f9d6d5;
+            padding: 4px 12px;
+            border-radius: 20px;
+            display: inline-block;
+          ">Unauthorized</span>
+        {% endif %}
+      </td>
+    </tr>
+  </table>
+</div>
+
+<div style="text-align: center; margin-top: 35px;">
+    <a href="{% url 'update_profile' %}" 
+       style="
+         background-color: #2980b9;
+         color: white;
+         padding: 12px 30px;
+         font-weight: 600;
+         font-size: 16px;
+         border-radius: 30px;
+         text-decoration: none;
+         box-shadow: 0 6px 15px rgba(41, 128, 185, 0.4);
+         transition: background-color 0.3s ease;
+         display: inline-block;
+       "
+       onmouseover="this.style.backgroundColor='#1f618d'"
+       onmouseout="this.style.backgroundColor='#2980b9'"
+    >
+      <i class="fas fa-edit" style="margin-right: 8px;"></i> Update Profile
+    </a>
+  </div>
+{% endblock %}
